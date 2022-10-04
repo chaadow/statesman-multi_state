@@ -27,7 +27,7 @@ module Statesman
 
           attribute virtual_attribute_name
 
-          %w[current_state in_state? transition_to transition_to! can_transition_to?].each do |meth|
+          %w[current_state in_state? transition_to transition_to! can_transition_to? history last_transition last_transition_to].each do |meth|
             delegate meth, to: state_machine_name, prefix: field_name
           end
 
