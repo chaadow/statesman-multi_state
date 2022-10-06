@@ -31,3 +31,11 @@
 
 en:
   hello: "Hello world"
+
+  statesman:
+    user_status_order:
+      user_pending: User Pending
+      processed: Processed
+    admin_status_order:
+      admin_pending: Admin Pending
+      validated: Validated

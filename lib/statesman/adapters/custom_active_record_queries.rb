@@ -3,13 +3,11 @@
 module Statesman
   module Adapters
     module CustomActiveRecordQueries
-
       def self.[](**args)
         ClassMethods.new(**args)
       end
 
       class ClassMethods < Module
-
         def initialize(**args)
           @args = args
         end
@@ -46,8 +44,8 @@ module Statesman
           base.define_singleton_method(:"#{field_name}_in_state") do |*states|
             states = states.flatten
 
-            joins(public_send(join_name)).
-              where(query_builder.states_where(states), states)
+            joins(public_send(join_name))
+              .where(query_builder.states_where(states), states)
           end
         end
 
@@ -55,8 +53,8 @@ module Statesman
           base.define_singleton_method(:"#{field_name}_not_in_state") do |*states|
             states = states.flatten
 
-            joins(public_send(join_name)).
-              where.not(query_builder.states_where(states), states)
+            joins(public_send(join_name))
+              .where.not(query_builder.states_where(states), states)
           end
         end
       end
