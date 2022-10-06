@@ -2,6 +2,7 @@
 /doc/
 /tags
 /log/*.log
+/Gemfile.lock
 /pkg/
 /tmp/
 /test/dummy/db/*.sqlite3

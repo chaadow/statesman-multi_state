@@ -1,4 +1,6 @@
 # Statesman::MultiState
+![Build](https://github.com/chaadow/statesman-multi_state/actions/workflows/ruby.yml/badge.svg)
+
 Handle multi state for `statesman` through `has_one_state_machine` ActiveRecord macro
 
 ## Usage

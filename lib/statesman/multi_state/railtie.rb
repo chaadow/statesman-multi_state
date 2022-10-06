@@ -1,8 +1,9 @@
+# frozen_string_literal: true
+
 module Statesman
   module MultiState
     class Railtie < ::Rails::Railtie
-
-      initializer "statesman.multi_state.init" do
+      initializer 'statesman.multi_state.init' do
         require 'statesman/multi_state/reflection'
         require 'statesman/multi_state/active_record_macro'
 
