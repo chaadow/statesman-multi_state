@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.authors     = ['Chedli Bourguiba']
   spec.email       = ['bourguiba.chedli@gmail.com']
   spec.homepage    = 'https://github.com/chaadow/statesman-multi_state'
-  spec.summary     = 'Handle multi state for statesman through has_one_state_machine'
-  spec.description = 'Handle multi state for statesman through `has_one_state_machine` ActiveRecord macro'
+  spec.summary     = 'Rails/Statesman plugin that handle multiple state machines on the same model through `has_one_state_machine` ActiveRecord macro'
+  spec.description = spec.summary
   spec.license     = 'MIT'
   spec.metadata['homepage_uri'] = spec.homepage
   spec.metadata['source_code_uri'] = spec.homepage
