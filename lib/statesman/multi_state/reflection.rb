@@ -5,7 +5,7 @@ module Statesman
     module Reflection
       # Holds all the metadata about a  state_machine as it was
       # specified in the Active Record class.
-      class HasOneStateMachineReflection < ::ActiveRecord::Reflection::MacroReflection  # :nodoc:
+      class HasOneStateMachineReflection < ::ActiveRecord::Reflection::MacroReflection # :nodoc:
         def macro
           :has_one_state_machine
         end
