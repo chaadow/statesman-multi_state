@@ -1,5 +1,5 @@
-# Statesman::MultiState
-![Build](https://github.com/chaadow/statesman-multi_state/actions/workflows/ruby.yml/badge.svg)
+# Statesman::MultiState 
+![Gem](https://img.shields.io/gem/v/statesman-multi_state?style=for-the-badge) ![Build Status](https://img.shields.io/github/workflow/status/chaadow/statesman-multi_state/Ruby?style=for-the-badge)
 
 Handle multiple state machines on the same ActiveRecord model for `statesman` through `has_one_state_machine` ActiveRecord macro.
 
