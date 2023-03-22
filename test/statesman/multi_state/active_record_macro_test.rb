@@ -17,10 +17,12 @@ module Statesman
         end
       end
 
-      test '.has_one_state_machine defines a virtual attribute for each state machine' do
-        statuses.each do |status|
-          assert @klass.new.respond_to?(:"#{status}_state_form")
-        end
+      test '.has_one_state_machine defines a default virtual attribute for each state machine when not provided' do
+        assert @klass.new.respond_to?(:user_status_state_form)
+      end
+
+      test '.has_one_state_machine overrides virtual attribute name' do
+        assert @klass.new.respond_to?(:my_attribute)
       end
 
       test '.has_one_state_machine defines active record scopes for each state machine' do
@@ -112,7 +114,7 @@ module Statesman
         klass.has_one_state_machine :user_status, state_machine_klass: 'UserStatusOrderStateMachine',
                                                   transition_klass: 'UserStatusOrderTransition'
         klass.has_one_state_machine :admin_status, state_machine_klass: 'AdminStatusOrderStateMachine',
-                                                   transition_klass: 'AdminStatusOrderTransition'
+                                                   transition_klass: 'AdminStatusOrderTransition', virtual_attribute_name: 'my_attribute'
       end
 
       def build_ar_klass
