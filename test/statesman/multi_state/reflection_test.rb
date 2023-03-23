@@ -16,6 +16,7 @@ module Statesman
 
         reflection = Order.reflect_on_state_machine(:custom_status)
         assert_equal :transitions, reflection.options[:transition_name]
+        assert_equal 'my_attribute', reflection.options[:virtual_attribute_name]
       end
 
       test 'reflection on a singular state machine with the same name as a state machine on another model' do

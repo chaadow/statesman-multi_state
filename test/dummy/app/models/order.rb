@@ -6,5 +6,5 @@ class Order < ApplicationRecord
   has_one_state_machine :admin_status, state_machine_klass: 'AdminStatusOrderStateMachine',
                                        transition_klass: 'AdminStatusOrderTransition'
   has_one_state_machine :custom_status, state_machine_klass: 'AdminStatusOrderStateMachine',
-                                        transition_klass: 'AdminStatusOrderTransition', transition_name: :transitions
+                                        transition_klass: 'AdminStatusOrderTransition', transition_name: :transitions, virtual_attribute_name: 'my_attribute'
 end
