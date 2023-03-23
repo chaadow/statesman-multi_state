@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+## [0.1.3] - 2023-03-23
+### Added
+  - Add virtual_atttribute_name to the `has_one_state_machine` ActiveRecord reflection
 ## [0.1.2] - 2023-03-22
 ### Added
   - Allow to override virtual attribute name for a state machine.
