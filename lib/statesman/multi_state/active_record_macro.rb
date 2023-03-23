@@ -94,7 +94,7 @@ module Statesman
             field_name,
             nil,
             { state_machine_klass: state_machine_klass, transition_klass: transition_klass,
-              transition_name: transition_name },
+              transition_name: transition_name, virtual_attribute_name: virtual_attribute_name },
             self
           )
 
