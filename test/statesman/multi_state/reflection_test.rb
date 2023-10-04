@@ -17,6 +17,9 @@ module Statesman
         reflection = Order.reflect_on_state_machine(:custom_status)
         assert_equal :transitions, reflection.options[:transition_name]
         assert_equal 'my_attribute', reflection.options[:virtual_attribute_name]
+
+        reflection = Order.reflect_on_state_machine(:foreign_key_status)
+        assert_equal 'custom_fk_id', reflection.options[:transition_foreign_key]
       end
 
       test 'reflection on a singular state machine with the same name as a state machine on another model' do
@@ -34,9 +37,9 @@ module Statesman
         reflections = Order.reflect_on_all_state_machines.sort_by(&:name)
 
         assert_equal [Order], reflections.collect(&:active_record).uniq
-        assert_equal %i[admin_status custom_status user_status], reflections.collect(&:name)
-        assert_equal %i[has_one_state_machine has_one_state_machine has_one_state_machine], reflections.collect(&:macro)
-        assert_equal %i[admin_status_order_transitions transitions user_status_order_transitions], reflections.collect { |reflection|
+        assert_equal %i[admin_status custom_status foreign_key_status user_status], reflections.collect(&:name)
+        assert_equal %i[has_one_state_machine has_one_state_machine has_one_state_machine has_one_state_machine], reflections.collect(&:macro)
+        assert_equal %i[admin_status_order_transitions transitions foreign_key_status_order_transitions user_status_order_transitions], reflections.collect { |reflection|
                                                                                                      reflection.options[:transition_name]
                                                                                                    }
       end
