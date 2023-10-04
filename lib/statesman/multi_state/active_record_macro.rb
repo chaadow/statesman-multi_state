@@ -9,13 +9,15 @@ module Statesman
 
       class_methods do
         def has_one_state_machine(field_name, state_machine_klass:, transition_klass:,
-                                  transition_name: transition_klass.to_s.underscore.pluralize.to_sym, virtual_attribute_name: "#{field_name}_state_form")
+                                  transition_name: transition_klass.to_s.underscore.pluralize.to_sym, virtual_attribute_name: "#{field_name}_state_form",
+                                  transition_foreign_key: nil)
           state_machine_name = "#{field_name}_state_machine"
 
           # To handle STI, this needs to be done to get the base klass
           base_klass = caller_locations.first.label.split(':').last[...-1]
 
-          has_many transition_name, class_name: transition_klass.to_s, autosave: false, dependent: :destroy
+          association_options = { class_name: transition_klass.to_s, autosave: false, dependent: :destroy }.merge(transition_foreign_key ? { foreign_key: transition_foreign_key.to_s } : {} )
+          has_many transition_name, **association_options
 
           include Statesman::Adapters::CustomActiveRecordQueries[
             transition_class: transition_klass.constantize,
@@ -94,7 +96,8 @@ module Statesman
             field_name,
             nil,
             { state_machine_klass: state_machine_klass, transition_klass: transition_klass,
-              transition_name: transition_name, virtual_attribute_name: virtual_attribute_name },
+              transition_name: transition_name, virtual_attribute_name: virtual_attribute_name,
+              transition_foreign_key: transition_foreign_key },
             self
           )
 
