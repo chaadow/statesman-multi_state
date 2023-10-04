@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+## [0.2.0] - 2023-10-04
+### Added
+  - Add `foreign_key_transition` option to the `has_one_state_machine` to proxy to the `has_many :transitions` association
+
 ## [0.1.3] - 2023-03-23
 ### Added
   - Add virtual_atttribute_name to the `has_one_state_machine` ActiveRecord reflection
