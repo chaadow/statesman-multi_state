@@ -27,6 +27,7 @@ gem "statesman-multi_state"
 class Order < ActiveRecord::Base
   has_one_state_machine :business_status, state_machine_klass: 'OrderBusinessStatusStateMachine', transition_klass: 'OrderBusinessStatus'
   has_one_state_machine :admin_status, state_machine_klass: 'StateMachineKlass', transition_klass: 'MyTransitionKlass'
+  has_one_state_machine :custom_status, state_machine_klass: 'StateMachineKlass', transition_klass: 'MyTransitionKlass', transition_foreign_key: 'my_custom_fk_id'
 end
 ```
 
@@ -34,7 +35,11 @@ Calling `has_one_state_machine` on `business_status` adds the following:
 - A has_many association with the transition table
 ```ruby
  has_many :order_business_status_transitions, dependent: :destroy
+
+ # with custom foreign key if `transition_foreign_key` is set on `has_one_state_machine`
+ has_many :order_business_status_transitions, dependent: :destroy, foreign_key: 'my_custom_fk_id'
  ```
+
  - a virtual attribute `#business_status_state_form` (using the `ActiveRecord::Attributes` API ) to represent the actual current value of the state machine on the transition table.
  This also allows to be used in forms directly without the need for nested attributes. Using this API instead of a regular `attr_accessor` allows us to get all the benefits of dirty tracking, so we can track when changes were made, and perform the appropriate transitions.
 It default to `business_status` current state on the state machine
