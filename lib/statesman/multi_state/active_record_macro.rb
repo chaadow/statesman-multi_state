@@ -9,7 +9,7 @@ module Statesman
 
       class_methods do
         def has_one_state_machine(field_name, state_machine_klass:, transition_klass:,
-                                  transition_name: transition_klass.to_s.underscore.pluralize.to_sym, virtual_attribute_name: "#{field_name}_state_form",
+                                  transition_name: transition_klass.to_s.underscore.demodulize.pluralize.to_sym, virtual_attribute_name: "#{field_name}_state_form",
                                   transition_foreign_key: nil)
           state_machine_name = "#{field_name}_state_machine"
 
