@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'statesman'
 require 'statesman/adapters/custom_active_record_queries'
 
 module Statesman
