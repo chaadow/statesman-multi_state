@@ -83,9 +83,10 @@ module Statesman
                   if defined?(super)
                     super
                   else
-                    save
-                    @registered_callbacks.each(&:call)
-                    @registered_callbacks = []
+                    save.tap do
+                      @registered_callbacks.each(&:call)
+                      @registered_callbacks = []
+                    end  
                   end
                 end
               METHOD
