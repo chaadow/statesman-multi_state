@@ -10,5 +10,4 @@ class Order < ApplicationRecord
   has_one_state_machine :foreign_key_status, state_machine_klass: 'UserStatusOrderStateMachine',
                                              transition_klass: 'ForeignKeyStatusOrderTransition',
                                              transition_foreign_key: 'custom_fk_id'
-
 end

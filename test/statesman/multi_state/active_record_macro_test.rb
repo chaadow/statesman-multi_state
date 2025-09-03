@@ -40,7 +40,7 @@ module Statesman
       end
 
       test '.has_one_state_machine defines i18n instance methods for each state machine' do
-        order = Order.new(id: 0)
+        order = Order.new
 
         # Check test/dummy/config/en.yml for translations
         statuses.each do |status|
@@ -58,11 +58,11 @@ module Statesman
       end
 
       test 'defines "#save_with_state" to handle state on creation' do
-        order = Order.new(id: 0)
+        order = Order.new
         assert_equal :user_pending, order.user_status_current_state.to_sym
         assert_equal :admin_pending, order.admin_status_current_state.to_sym
-        assert_equal 1, UserStatusOrderTransition.count
-        assert_equal 1, AdminStatusOrderTransition.count
+        assert_equal 0, UserStatusOrderTransition.count
+        assert_equal 0, AdminStatusOrderTransition.count
 
         order.user_status_state_form = 'processed'
         order.admin_status_state_form = 'validated'
@@ -71,8 +71,8 @@ module Statesman
 
         assert_equal :processed, order.user_status_current_state.to_sym
         assert_equal :validated, order.admin_status_current_state.to_sym
-        assert_equal 2, UserStatusOrderTransition.count
-        assert_equal 2, AdminStatusOrderTransition.count
+        assert_equal 1, UserStatusOrderTransition.count
+        assert_equal 1, AdminStatusOrderTransition.count
       end
 
       test 'sets an Reflection::HasOneStateMachineReflection and yield it to a block if given' do

@@ -39,14 +39,21 @@ module Statesman
 
             def #{state_machine_name}
               key = "@#{state_machine_name}"
-              return instance_variable_get(key) if instance_variable_defined?(key)
+              return instance_variable_get(key) if instance_variable_defined?(key) && @#{state_machine_name}.object.persisted?
 
               instance_variable_set(key, #{state_machine_klass}.new(
                 self,
                 transition_class: #{transition_klass},
                 association_name: "#{transition_name}",
-                initial_transition: "#{initial_transition}"
+                initial_transition: false
               ))
+
+              if #{initial_transition}
+                if @#{state_machine_name}.history.empty? && #{state_machine_klass}.initial_state
+                  @#{state_machine_name}.instance_variable_get(:@storage_adapter).create(nil, #{state_machine_klass}.initial_state) if @#{state_machine_name}.object.persisted?
+                end
+              end
+              @#{state_machine_name}
             end
 
             def #{virtual_attribute_name}
