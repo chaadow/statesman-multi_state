@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-## [0.2.4] - 2025-09-03
+## [0.2.5] - 2025-09-03
   - Add support for `initial_transition` to `has_one_state_machine`
 ## [0.2.2] - 2023-10-17
   - Change demodulize placement
