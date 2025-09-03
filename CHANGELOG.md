@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+## [0.2.6] - 2025-09-03
+  - Fix `initial_transition` issue when the associated model is not yet
+    persisted in the database, and calls the state machine in a `validate`
+    block which causes an infinite loop. This should be fixed on `statesman`
+    but I don't have time and the project does not seem well maintained.
 
 ## [0.2.5] - 2025-09-03
   - Add support for `initial_transition` to `has_one_state_machine`
