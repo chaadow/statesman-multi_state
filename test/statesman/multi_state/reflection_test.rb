@@ -13,10 +13,12 @@ module Statesman
         assert_equal :has_one_state_machine, reflection.macro
         assert_equal 'UserStatusOrderStateMachine', reflection.options[:state_machine_klass]
         assert_equal 'UserStatusOrderTransition', reflection.options[:transition_klass]
+        assert reflection.options[:initial_transition]
 
         reflection = Order.reflect_on_state_machine(:custom_status)
         assert_equal :transitions, reflection.options[:transition_name]
         assert_equal 'my_attribute', reflection.options[:virtual_attribute_name]
+        assert_equal false, reflection.options[:initial_transition]
 
         reflection = Order.reflect_on_state_machine(:foreign_key_status)
         assert_equal 'custom_fk_id', reflection.options[:transition_foreign_key]

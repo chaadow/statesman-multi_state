@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_10_04_142606) do
+ActiveRecord::Schema[8.0].define(version: 2023_10_04_142606) do
   create_table "admin_status_order_transitions", force: :cascade do |t|
     t.string "to_state", null: false
+    t.string "from_state"
     t.text "metadata", default: "{}"
     t.integer "sort_key", null: false
     t.integer "order_id", null: false
@@ -25,6 +26,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_04_142606) do
 
   create_table "foreign_key_status_order_transitions", force: :cascade do |t|
     t.string "to_state", null: false
+    t.string "from_state"
     t.text "metadata", default: "{}"
     t.integer "sort_key", null: false
     t.integer "custom_fk_id", null: false
@@ -42,6 +44,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_04_142606) do
 
   create_table "user_status_order_transitions", force: :cascade do |t|
     t.string "to_state", null: false
+    t.string "from_state"
     t.text "metadata", default: "{}"
     t.integer "sort_key", null: false
     t.integer "order_id", null: false

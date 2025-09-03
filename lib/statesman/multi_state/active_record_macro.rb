@@ -11,7 +11,7 @@ module Statesman
       class_methods do
         def has_one_state_machine(field_name, state_machine_klass:, transition_klass:,
                                   transition_name: transition_klass.to_s.demodulize.underscore.pluralize.to_sym, virtual_attribute_name: "#{field_name}_state_form",
-                                  transition_foreign_key: nil)
+                                  transition_foreign_key: nil, initial_transition: true)
           state_machine_name = "#{field_name}_state_machine"
 
           # To handle STI, this needs to be done to get the base klass
@@ -44,7 +44,8 @@ module Statesman
               instance_variable_set(key, #{state_machine_klass}.new(
                 self,
                 transition_class: #{transition_klass},
-                association_name: "#{transition_name}"
+                association_name: "#{transition_name}",
+                initial_transition: "#{initial_transition}"
               ))
             end
 
@@ -86,7 +87,7 @@ module Statesman
                     save.tap do
                       @registered_callbacks.each(&:call)
                       @registered_callbacks = []
-                    end  
+                    end
                   end
                 end
               METHOD
@@ -99,7 +100,7 @@ module Statesman
             nil,
             { state_machine_klass: state_machine_klass, transition_klass: transition_klass,
               transition_name: transition_name, virtual_attribute_name: virtual_attribute_name,
-              transition_foreign_key: transition_foreign_key },
+              transition_foreign_key: transition_foreign_key, initial_transition: initial_transition },
             self
           )
 

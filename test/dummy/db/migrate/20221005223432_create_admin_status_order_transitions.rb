@@ -4,6 +4,7 @@ class CreateAdminStatusOrderTransitions < ActiveRecord::Migration[7.0]
   def change
     create_table :admin_status_order_transitions do |t|
       t.string :to_state, null: false
+      t.string :from_state, null: true
       t.text :metadata, default: '{}'
       t.integer :sort_key, null: false
       t.integer :order_id, null: false
