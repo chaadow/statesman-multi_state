@@ -64,6 +64,12 @@ module Statesman
               Hash[self.class.#{field_name}_human_wrapper]
                 .invert[#{field_name}_current_state]
             end
+
+            private
+
+            def #{field_name}
+              #{field_name}_current_state
+            end
           CODE
 
           include(const_set("#{field_name}#{SecureRandom.hex(4)}_mod".classify, Module.new).tap do |mod|
@@ -84,8 +90,13 @@ module Statesman
               class_eval <<~METHOD, __FILE__, __LINE__ + 1
                 def save_with_state(**options)
                   @registered_callbacks ||= []
-                  if #{virtual_attribute_name}_changed? && #{field_name}_can_transition_to?(#{virtual_attribute_name})
-                    @registered_callbacks << -> { #{field_name}_transition_to(#{virtual_attribute_name}, **options) }
+                  if #{virtual_attribute_name}.to_s != #{field_name}_current_state.to_s
+                    if #{field_name}_can_transition_to?(#{virtual_attribute_name})
+                      @registered_callbacks << -> { #{field_name}_transition_to(#{virtual_attribute_name}, **options) }
+                    else
+                      errors.add(:#{field_name}, :invalid_transition, message: "cannot transition from \#{#{field_name}} to \#{#{virtual_attribute_name}}")
+                      return false
+                    end
                   end
 
                   if defined?(super)
