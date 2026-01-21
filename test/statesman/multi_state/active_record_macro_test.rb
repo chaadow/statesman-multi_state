@@ -75,6 +75,24 @@ module Statesman
         assert_equal 1, AdminStatusOrderTransition.count
       end
 
+      test 'save_with_state returns false and adds errors if the transition is invalid' do
+        order = Order.create
+        order.user_status_state_form = 'invalid_state'
+        assert_equal false, order.save_with_state
+        assert order.errors.any?, 'Expected errors to be present'
+        assert_includes order.errors.full_messages, 'User status cannot transition from user_pending to invalid_state'
+      end
+
+      test 'save_with_state does not error when setting the same state as current' do
+        order = Order.create
+        current_state = order.user_status_current_state
+
+        order.user_status_state_form = current_state
+        assert order.save_with_state, 'Expected save_with_state to return true'
+        assert_empty order.errors, 'Expected no errors'
+        assert_equal current_state, order.user_status_current_state
+      end
+
       test 'sets an Reflection::HasOneStateMachineReflection and yield it to a block if given' do
         result = nil
         klass = build_ar_klass
