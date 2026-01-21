@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+
+## [0.2.7] - 2026-01-21
+  - Fix `save_with_state` false negative always returning true even when the
+    transition is invalid.
+
 ## [0.2.6] - 2025-09-03
   - Fix `initial_transition` issue when the associated model is not yet
     persisted in the database, and calls the state machine in a `validate`
