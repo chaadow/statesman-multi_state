@@ -75,6 +75,28 @@ module Statesman
         assert_equal 1, AdminStatusOrderTransition.count
       end
 
+      test 'reload resets state machines so current_state reflects DB changes from another instance' do
+        order = Order.create!
+
+        # Prime memoized state machine instances (they persist across `reload`)
+        assert_equal :user_pending, order.user_status_current_state.to_sym
+        assert_equal :admin_pending, order.admin_status_current_state.to_sym
+
+        # Load a separate instance for the same DB row to simulate a concurrent updater
+        other = Order.find(order.id)
+        other.user_status_transition_to!(:processed)
+        other.admin_status_transition_to!(:validated)
+
+        # Prove the cache is stale without an explicit reset
+        assert_equal :user_pending, order.user_status_current_state.to_sym
+        assert_equal :admin_pending, order.admin_status_current_state.to_sym
+
+        order.reload
+
+        assert_equal :processed, order.user_status_current_state.to_sym
+        assert_equal :validated, order.admin_status_current_state.to_sym
+      end
+
       test 'sets an Reflection::HasOneStateMachineReflection and yield it to a block if given' do
         result = nil
         klass = build_ar_klass

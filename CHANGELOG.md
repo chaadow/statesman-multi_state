@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.8] - 2026-02-06
+  - Reset memoized state machines on `reload` so `current_state` is not stale after
+    concurrent updates.
+
 ## [0.2.7] - 2026-01-21
   - Fix `save_with_state` false negative always returning true even when the
     transition is invalid.

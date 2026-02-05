@@ -27,7 +27,15 @@ module Statesman
 
           define_in_state(base, query_builder, join_name, field_name)
           define_not_in_state(base, query_builder, join_name, field_name)
-        end
+
+          define_method(:reload) do |*a|
+            instance = super(*a)
+            if instance.respond_to?(:"#{field_name}_state_machine", true)
+              instance.send(:"#{field_name}_state_machine").reset
+            end
+            instance
+          end
+       end
 
         private
 
