@@ -14,6 +14,10 @@ module Statesman
           ActiveRecord::Reflection.singleton_class.prepend(Statesman::MultiState::Reflection::ReflectionExtension)
         end
       end
+
+      initializer 'statesman.multi_state.i18n' do |app|
+        app.config.i18n.load_path += Dir[File.expand_path('locales/*.yml', __dir__)]
+      end
     end
   end
 end

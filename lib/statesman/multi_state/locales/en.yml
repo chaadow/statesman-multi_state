@@ -1,0 +1,4 @@
+en:
+  errors:
+    messages:
+      invalid_transition: "cannot transition from %{current_state} to %{target_state}"

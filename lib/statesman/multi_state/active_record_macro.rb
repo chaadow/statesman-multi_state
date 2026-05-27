@@ -59,7 +59,8 @@ module Statesman
             end
 
             def #{virtual_attribute_name}
-              super() || #{field_name}_current_state
+              value = read_attribute("#{virtual_attribute_name}")
+              value.nil? ? #{field_name}_current_state : value
             end
 
             def #{field_name}_current_state_human
@@ -67,6 +68,26 @@ module Statesman
                 .invert[#{field_name}_current_state]
             end
           CODE
+
+          # Define a public reader so form helpers, serializers, and other
+          # callers that use `public_send(field_name)` work. Guard against
+          # clobbering an existing column reader or user-defined method with
+          # the same name as `field_name`.
+          table_name_available = name.present? || (instance_variable_defined?(:@table_name) && @table_name.present?)
+          has_column_reader = if respond_to?(:column_names) && table_name_available &&
+                                 respond_to?(:table_exists?) && table_exists?
+                                column_names.include?(field_name.to_s)
+                              else
+                                false
+                              end
+
+          unless method_defined?(field_name) || private_method_defined?(field_name) || has_column_reader
+            generated_association_methods.class_eval <<~READER, __FILE__, __LINE__ + 1
+              def #{field_name}
+                #{field_name}_current_state
+              end
+            READER
+          end
 
           include(const_set("#{field_name}#{SecureRandom.hex(4)}_mod".classify, Module.new).tap do |mod|
             mod.module_eval do
@@ -86,8 +107,18 @@ module Statesman
               class_eval <<~METHOD, __FILE__, __LINE__ + 1
                 def save_with_state(**options)
                   @registered_callbacks ||= []
-                  if #{virtual_attribute_name}_changed? && #{field_name}_can_transition_to?(#{virtual_attribute_name})
-                    @registered_callbacks << -> { #{field_name}_transition_to(#{virtual_attribute_name}, **options) }
+                  if #{virtual_attribute_name}.to_s != #{field_name}_current_state.to_s
+                    if #{field_name}_can_transition_to?(#{virtual_attribute_name})
+                      @registered_callbacks << -> { #{field_name}_transition_to(#{virtual_attribute_name}, **options) }
+                    else
+                      errors.add(
+                        :#{field_name},
+                        :invalid_transition,
+                        current_state: #{field_name}_current_state_human,
+                        target_state: I18n.t(#{virtual_attribute_name}, scope: "statesman.#{field_name}_#{base_klass.underscore}", default: #{virtual_attribute_name}.to_s)
+                      )
+                      return false
+                    end
                   end
 
                   if defined?(super)

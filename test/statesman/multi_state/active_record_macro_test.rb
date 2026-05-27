@@ -75,6 +75,48 @@ module Statesman
         assert_equal 1, AdminStatusOrderTransition.count
       end
 
+      test 'save_with_state returns false and adds errors if the transition is invalid' do
+        order = Order.create
+        order.user_status_state_form = 'invalid_state'
+        assert_equal false, order.save_with_state
+        assert order.errors.any?, 'Expected errors to be present'
+        assert_includes order.errors.full_messages, 'User status cannot transition from User Pending to invalid_state'
+      end
+
+      test 'save_with_state invalid transition error uses i18n and humanized state names' do
+        order = Order.create
+        order.user_status_state_form = 'invalid_state'
+        refute order.save_with_state
+
+        error = order.errors.find { |e| e.attribute == :user_status }
+        assert_equal :invalid_transition, error.type
+        assert_equal 'User Pending', error.options[:current_state]
+        assert_equal 'invalid_state', error.options[:target_state]
+      end
+
+      test 'save_with_state invalid transition error humanizes the target state when defined' do
+        order = Order.create
+        order.user_status_state_form = 'processed'
+        order.user_status_transition_to!(:processed)
+        order.user_status_state_form = 'user_pending'
+
+        refute order.save_with_state
+
+        error = order.errors.find { |e| e.attribute == :user_status }
+        assert_equal 'Processed', error.options[:current_state]
+        assert_equal 'User Pending', error.options[:target_state]
+      end
+
+      test 'save_with_state does not error when setting the same state as current' do
+        order = Order.create
+        current_state = order.user_status_current_state
+
+        order.user_status_state_form = current_state
+        assert order.save_with_state, 'Expected save_with_state to return true'
+        assert_empty order.errors, 'Expected no errors'
+        assert_equal current_state, order.user_status_current_state
+      end
+
       test 'reload resets state machines so current_state reflects DB changes from another instance' do
         order = Order.create!
 
@@ -147,6 +189,27 @@ module Statesman
 
           assert_equal statuses, klass.reflect_on_all_state_machines.map(&:name)
         end
+      end
+
+      test '.has_one_state_machine defines a public field_name reader' do
+        order = Order.new
+        assert Order.public_method_defined?(:user_status), 'Expected user_status to be public'
+        assert_equal order.user_status_current_state, order.user_status
+      end
+
+      test '.has_one_state_machine does not clobber a pre-existing method named like field_name' do
+        klass = build_ar_klass
+        klass.class_eval do
+          def user_status
+            'pre_existing_value'
+          end
+        end
+
+        klass.has_one_state_machine :user_status,
+                                    state_machine_klass: 'UserStatusOrderStateMachine',
+                                    transition_klass: 'UserStatusOrderTransition'
+
+        assert_equal 'pre_existing_value', klass.new.user_status
       end
 
       private
