@@ -70,20 +70,13 @@ module Statesman
           CODE
 
           # Define a public reader so form helpers, serializers, and other
-          # callers that use `public_send(field_name)` work. Guard against
-          # clobbering an existing column reader or user-defined method with
-          # the same name as `field_name`.
-          table_name_available = name.present? || (instance_variable_defined?(:@table_name) && @table_name.present?)
-          has_column_reader = if respond_to?(:column_names) && table_name_available &&
-                                 respond_to?(:table_exists?) && table_exists?
-                                column_names.include?(field_name.to_s)
-                              else
-                                false
-                              end
-
-          unless method_defined?(field_name) || private_method_defined?(field_name) || has_column_reader
+          # callers that use `public_send(field_name)` work. Avoid schema
+          # introspection here because this macro runs during application boot.
+          unless method_defined?(field_name) || private_method_defined?(field_name)
             generated_association_methods.class_eval <<~READER, __FILE__, __LINE__ + 1
               def #{field_name}
+                return read_attribute("#{field_name}") if has_attribute?("#{field_name}")
+
                 #{field_name}_current_state
               end
             READER
