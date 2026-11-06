@@ -41,16 +41,22 @@ module Statesman
               key = "@#{state_machine_name}"
               return instance_variable_get(key) if instance_variable_defined?(key) && @#{state_machine_name}.object.persisted?
 
-              instance_variable_set(key, #{state_machine_klass}.new(
+              state_machine = #{state_machine_klass}.new(
                 self,
                 transition_class: #{transition_klass},
                 association_name: "#{transition_name}",
                 initial_transition: false
-              ))
+              )
+
+              # Not persisted yet: the initial transition below cannot be written. Do not memoize this
+              # machine, otherwise the first read after the INSERT would return it and skip that transition.
+              return state_machine unless persisted?
+
+              instance_variable_set(key, state_machine)
 
               if #{initial_transition}
                 if @#{state_machine_name}.history.empty? && #{state_machine_klass}.initial_state
-                  if @#{state_machine_name}.object.persisted? && self.class.current_role != ::ActiveRecord.reading_role
+                  if self.class.current_role != ::ActiveRecord.reading_role
                     @#{state_machine_name}.instance_variable_get(:@storage_adapter).create(nil, #{state_machine_klass}.initial_state)
                   end
                 end

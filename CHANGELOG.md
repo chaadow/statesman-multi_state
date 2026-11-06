@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+  - Fix the initial transition never being written when the state machine was first
+    read before the record was persisted (e.g. `save_with_state`, which compares the
+    form state to `current_state` before saving): the machine is no longer memoized
+    until the record is persisted.
+  - `save_with_state` on a new record now records the initial transition before the
+    transition to the submitted state (two transitions instead of one).
 
 ## [0.2.9] - 2026-02-06
   - Avoid creating initial transitions when connected to a replica (ActiveRecord `reading_role`).
