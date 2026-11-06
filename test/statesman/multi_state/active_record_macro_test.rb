@@ -71,8 +71,9 @@ module Statesman
 
         assert_equal :processed, order.user_status_current_state.to_sym
         assert_equal :validated, order.admin_status_current_state.to_sym
-        assert_equal 1, UserStatusOrderTransition.count
-        assert_equal 1, AdminStatusOrderTransition.count
+        # The initial transition is recorded first, then the transition to the submitted state
+        assert_equal %w[user_pending processed], UserStatusOrderTransition.order(:sort_key).pluck(:to_state)
+        assert_equal %w[admin_pending validated], AdminStatusOrderTransition.order(:sort_key).pluck(:to_state)
       end
 
       test 'save_with_state returns false and adds errors if the transition is invalid' do
@@ -146,6 +147,16 @@ module Statesman
         order.user_status_current_state
 
         assert_equal 1, UserStatusOrderTransition.count
+      end
+
+      test 'creates initial transition when the state machine was first read before persistence' do
+        order = Order.new
+        assert_equal :user_pending, order.user_status_current_state.to_sym
+
+        order.save!
+        order.user_status_current_state
+
+        assert_equal ['user_pending'], UserStatusOrderTransition.where(order:).order(:sort_key).pluck(:to_state)
       end
 
       test 'does not create initial transition when connection is in reading role' do
