@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+## [0.3.2] - 2026-11-08
   - Fix the initial transition never being written when the state machine was first
     read before the record was persisted (e.g. `save_with_state`, which compares the
     form state to `current_state` before saving): the machine is no longer memoized
